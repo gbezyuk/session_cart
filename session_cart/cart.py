@@ -2,6 +2,7 @@
 Session based shopping cart
 """
 from django.core.exceptions import ImproperlyConfigured
+from .utils import import_cart
 
 class CartItem(object):
     """
@@ -35,8 +36,7 @@ class Cart(list):
             from django.db import models
             from django.conf import settings
             try:
-                cart_app, cart_model = settings.CART_MODEL.split('.')
-                Cart.model = models.get_model(cart_app, cart_model)
+                Cart.model = import_cart(settings.CART_MODEL)
             except AttributeError:
                 raise ImproperlyConfigured("%s isn't a valid Cart model." % settings.CART_MODEL)
         # Cart is stored as a list of ( item_id, quantity )
@@ -72,6 +72,16 @@ class Cart(list):
             self[self.index(item)].quantity += quantity
         except ValueError:
             super(Cart, self).append(CartItem(item, quantity))
+
+    def index(self, value, **kwargs):
+        """
+        Preventing duplication of (item, quantity) pairs
+        """
+        if isinstance(value, self.model):
+            for i in self:
+                if i.item == value:
+                    return self.index(i)
+        return super(Cart, self).index(value, **kwargs)
 
     def remove(self, item):
         """

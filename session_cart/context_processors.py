@@ -9,6 +9,6 @@ def carts(request):
     carts = getattr(request, 'carts', None)
     if carts:
         if 'default' in get_carts():
-            context['cart'] = carts.default
+            context['cart'] = carts['default']
         context['carts'] = carts
     return context

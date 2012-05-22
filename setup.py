@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup( name='session-cart',
-	version='1.0.2',
+	version='1.1.1',
 	description='A session-stored cart for Django',
-	author='Curtis Maloney',
-	author_email='curtis@tinbrain.net',
-	url='http://bitbucket.org/funkybob/session-cart/',
+	author='Curtis Maloney, Grigoriy Bezyuk',
+	author_email='curtis@tinbrain.net, gbezyuk@gmail.com',
+	url='http://github.com/gbezyuk/session_cart/',
 	keywords=['django', 'cms', 'e-commerce',],
 	packages=find_packages(),
 	zip_safe=False,
