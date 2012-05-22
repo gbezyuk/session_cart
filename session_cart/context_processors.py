@@ -7,8 +7,11 @@ def carts(request):
     """
     context = {}
     carts = getattr(request, 'carts', None)
+    cart = getattr(request, 'cart', None)
     if carts:
         if 'default' in get_carts():
             context['cart'] = carts['default']
         context['carts'] = carts
+    elif cart:
+        context['cart'] = cart
     return context

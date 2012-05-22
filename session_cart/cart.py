@@ -63,19 +63,9 @@ class Cart(list):
             return self.model._default_manager.get(pk=item)
         return item
 
-    def append(self, item, quantity = 1):
-        """
-        Append some amount of item to cart
-        """
-        item = self._get(item)
-        try:
-            self[self.index(item)].quantity += quantity
-        except ValueError:
-            super(Cart, self).append(CartItem(item, quantity))
-
     def index(self, value, **kwargs):
         """
-        Preventing duplication of (item, quantity) pairs
+        Overloaded parent class (list) method. Preventing duplication of (item, quantity) pairs.
         """
         if isinstance(value, self.model):
             for i in self:
@@ -83,11 +73,52 @@ class Cart(list):
                     return self.index(i)
         return super(Cart, self).index(value, **kwargs)
 
+    def append(self, item, quantity=1):
+        """
+        Append some amount of item to cart.
+        """
+        item = self._get(item)
+        try:
+            self[self.index(item)].quantity += quantity
+        except ValueError:
+            super(Cart, self).append(CartItem(item, quantity))
+
+    def update_quantity(self, item, quantity):
+        """
+        Update quantity of specified item in the cart
+        """
+        item = self._get(item)
+        try:
+            self[self.index(item)].quantity = quantity
+        except ValueError:
+            super(Cart, self).append(CartItem(item, quantity))
+
+    def update_quantities(self, dict):
+        """
+        Update quantities of specified items in the cart basing on provided dictionary
+        Dictionary format is stupid simple: {item_id1: quantity1, item_id2: quantity2}
+        """
+        for item_id in dict:
+            # item_id will be passed to _get() and transformed to real item
+            try:
+                self.update_quantity(item_id, dict[item_id])
+            except self.model.DoesNotExist:
+                # nobody cares - skipping this case silently
+                pass
+
     def remove(self, item):
         """
-        Remove single item from cart
+        Remove single item from the cart
         """
-        super(Cart, self).remove(self._get(item))
+        super(Cart, self).remove(self[self.index(self._get(item))])
+
+    def remove_items(self, items_list):
+        """
+        Remove list of items from the cart
+        """
+        for item in items_list:
+            self.remove(item)
+
 
     def empty(self):
         """
@@ -98,3 +129,11 @@ class Cart(list):
 
     def __repr__( self ):
         return ','.join([repr(x) for x in self])
+
+    @property
+    def items_total(self):
+        return len(self)
+
+    @property
+    def total_quantity(self):
+        return reduce(lambda res, x: res+x, [i.quantity for i in self])
