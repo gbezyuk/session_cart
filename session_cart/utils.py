@@ -10,7 +10,6 @@ def import_cart(import_path):
     """
     Imports the cart class described by import_path, where import_path is the
     full Python path to the class.
-
     """
     try:
         dot = import_path.rindex('.')
@@ -28,15 +27,12 @@ def import_cart(import_path):
         raise ImproperlyConfigured('Module "%s" does not define a "%s" '
                                    'class.' % (module, classname))
 
-
 def get_carts():
     """
     Return a dictionary of carts, where each key is the request attribute name
     and each value is a Cart object.
-
     """
     if not _carts:
         for key, value in settings.CARTS.items():
             _carts[key] = import_cart(value)
     return _carts
-

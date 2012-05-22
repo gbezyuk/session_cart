@@ -1,14 +1,10 @@
-
 from session_cart.cart import Cart
 from session_cart.utils import get_carts
-
 
 class MultiCartMiddleware(object):
     """
     Middleware that handles adding session carts to the request object.
-
     """
-
     def process_request(self, request):
         """
         Add the carts to the request object.
@@ -25,7 +21,6 @@ class MultiCartMiddleware(object):
     def process_response(self, request, response):
         """
         Update the session carts if they have changed.
-
         """
         # Don't assume the request object has carts, another layer may have
         # returned request this middleware's process_request was called.
@@ -35,14 +30,12 @@ class MultiCartMiddleware(object):
         return response
 
 class SimpleCartMiddleware(object):
-    '''
+    """
     Middleware to support only a single cart, for the simple case
-    '''
-
+    """
     def process_request(self, request):
         request.cart = Cart(request)
         return None
-
     def process_response(self, request, response):
         if hasattr(request, 'cart'):
             request.cart.save()

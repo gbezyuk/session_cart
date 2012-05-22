@@ -1,11 +1,9 @@
 from session_cart.utils import get_carts
 
-
 def carts(request):
     """
     Returns all session carts as 'carts', and the default cart (if one is
     provided) as 'cart'.
-
     """
     context = {}
     carts = getattr(request, 'carts', None)
